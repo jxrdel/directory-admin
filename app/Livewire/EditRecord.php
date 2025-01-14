@@ -15,6 +15,7 @@ class EditRecord extends Component
     public $position;
     public $extension;
     public $floor;
+    public $record;
 
     public function render()
     {
@@ -26,39 +27,37 @@ class EditRecord extends Component
     {
         // dd($id);
         $this->resetValidation();
-        $this->id = $id;
-        $user = Directory::find($id);
-        $this->employeename = $user->employee;
-        $this->department = $user->department;
-        $this->unit = $user->groupname;
-        $this->position = $user->extname;
-        $this->extension = $user->extno;
-        $this->floor = $user->location;
+        $this->record = Directory::find($id);
+        $this->employeename = $this->record->employee;
+        $this->department = $this->record->department;
+        $this->unit = $this->record->groupname;
+        $this->position = $this->record->extname;
+        $this->extension = $this->record->extno;
+        $this->floor = $this->record->location;
         
         $this->dispatch('display-edit-modal');
 
     }
 
     public function editRecord(){
+        // dd($this->record->extno);
+        $this->validate([
+            'extension' => 'unique:directory,extno,' . $this->record->id,
+        ]);
 
-        // dd($this->employeename);
-        if(Directory::extExists(trim($this->extension))){ //If extension exists, display error message
-            $this->addError('extension', 'This extension already exists');
-        }else{
-            Directory::where('id', $this->id)->update([
-                'employee' => $this->employeename,
-                'department' => $this->department,
-                'groupname' => $this->unit,
-                'extname' => $this->position,
-                'extno' => $this->extension,
-                'location' => $this->floor,
-            ]);
-            
-            $this->resetValidation();
-            $this->dispatch('close-edit-modal');
-            $this->dispatch('refresh-table');
-            $this->dispatch('show-message', message: 'Record edited successfully');
-        }
+        Directory::where('id', $this->record->id)->update([
+            'employee' => $this->employeename,
+            'department' => $this->department,
+            'groupname' => $this->unit,
+            'extname' => $this->position,
+            'extno' => $this->extension,
+            'location' => $this->floor,
+        ]);
+        
+        $this->resetValidation();
+        $this->dispatch('close-edit-modal');
+        $this->dispatch('refresh-table');
+        $this->dispatch('show-message', message: 'Record edited successfully');
         
 
     }
