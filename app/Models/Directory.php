@@ -29,4 +29,9 @@ class Directory extends Model
     {
         return self::where('extno', $extno)->exists();
     }
+
+    public static function employeeExists($employee)
+    {
+        return self::where('employee', $employee)->exists();
+    }
 }

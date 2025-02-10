@@ -82,7 +82,7 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-5 my-5">
-                    @yield('main')
+                    {{ $slot }}
                 </div>
             </main>
         </div>
@@ -115,19 +115,6 @@
 
         });
     </script>
-
-    @if (Session::has('success'))
-        <script>
-            toastr.options = {
-                "progressBar": true,
-                "closeButton": true,
-            }
-            toastr.success("{{ Session::get('success') }}", '', {
-                timeOut: 3000
-            });
-        </script>
-    @endif
-
     @yield('scripts')
 
 </html>

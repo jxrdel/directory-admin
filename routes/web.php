@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Controller;
+use App\Livewire\ImportRecords;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/Login', [Controller::class, 'login'])->name('login');
@@ -12,4 +13,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/Users', [Controller::class, 'users'])->name('users');
     Route::get('/getusers', [Controller::class, 'getUsers'])->name('getusers');
+
+    Route::get('/Import', ImportRecords::class)->name('import');
+
+    Route::get('/Download', [Controller::class, 'download'])->name('download');
 });

@@ -48,4 +48,44 @@ class Controller
 
         return DataTables::of($query)->make(true);
     }
+
+    public function import()
+    {
+        return view('import');
+    }
+
+    public function download()
+    {
+        $records = Directory::all();
+
+        $now = now();
+        $fileName = "directory-{$now->format('Y-m-d_H-i-s')}.csv";
+        $headers = [
+            "Content-Type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+        ];
+
+        $callback = function () use ($records) {
+            $file = fopen('php://output', 'w');
+
+            // Add CSV header with the specified column names
+            fputcsv($file, ['Floor', 'Department', 'Group Name', 'Employee', 'Extension Name', 'Extension Number']);
+
+            // Add records
+            foreach ($records as $record) {
+                fputcsv($file, [
+                    $record->location,      // Floor
+                    $record->department,    // Department
+                    $record->groupname,     // Group Name
+                    $record->employee,      // Employee
+                    $record->extname,       // Extension Name
+                    $record->extno,         // Extension Number
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }
